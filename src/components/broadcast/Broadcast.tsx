@@ -174,15 +174,28 @@ class SegmentUploader {
   private processing = false;
   private finishing = false;
 
+  private readonly sdk: Sdk;
+  private readonly streamId: string;
+  private readonly mimeType: string;
+  private readonly callbacks: {
+    onProgress: (segments: number, pending: number) => void;
+    onError: (msg: string) => void;
+  };
+
   constructor(
-    private readonly sdk: Sdk,
-    private readonly streamId: string,
-    private readonly mimeType: string,
-    private readonly callbacks: {
+    sdk: Sdk,
+    streamId: string,
+    mimeType: string,
+    callbacks: {
       onProgress: (segments: number, pending: number) => void;
       onError: (msg: string) => void;
     },
-  ) {}
+  ) {
+    this.sdk = sdk;
+    this.streamId = streamId;
+    this.mimeType = mimeType;
+    this.callbacks = callbacks;
+  }
 
   enqueue(blob: Blob): void {
     this.queue.push(blob);
